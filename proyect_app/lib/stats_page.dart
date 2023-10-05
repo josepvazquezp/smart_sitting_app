@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:proyect_app/provider_stats_page.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class StatsPage extends StatelessWidget {
+  StatsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "12.5",
+                      "${context.watch<StatsProvider>().getHeartRate}",
                       style: TextStyle(
                         fontSize: 30,
                       ),
@@ -62,7 +64,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "12.5",
+                      "${context.watch<StatsProvider>().getAvgRate}",
                       style: TextStyle(
                         fontSize: 30,
                         color: Color.fromARGB(255, 1, 90, 126),
@@ -91,7 +93,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "12.5",
+                      "${context.watch<StatsProvider>().getSittingTime}",
                       style: TextStyle(
                         fontSize: 30,
                       ),
@@ -112,7 +114,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "12.5",
+                      "${context.watch<StatsProvider>().getAvgTime}",
                       style: TextStyle(
                         fontSize: 30,
                         color: Color.fromARGB(255, 1, 90, 126),
@@ -126,10 +128,14 @@ class HomePage extends StatelessWidget {
               thickness: 2,
             ),
             CircleAvatar(
-              backgroundColor: Colors.green,
+              backgroundColor:
+                  context.watch<StatsProvider>().getTurnButtonStatus
+                      ? Colors.green
+                      : Colors.red,
               radius: 45,
               child: IconButton(
                 onPressed: () {
+                  context.read<StatsProvider>().pressedButton();
                   _showPostureDialog(context);
                 },
                 icon: Icon(
