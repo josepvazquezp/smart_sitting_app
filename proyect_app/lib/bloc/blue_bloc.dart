@@ -52,7 +52,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     await flutterBlue.stopScan();
     await _getConnectedDevices(emit);
     // emmiting scanning has completed
-    // emit(BlueFoundDesvicesState());
+    emit(BlueFoundDevicesState());
   }
 
   FutureOr<void> blueConnecting(TryConnectingEvent event, Emitter emit) async {
@@ -113,29 +113,29 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         print(value);
         print("===========");
 
-        if (value == "Bad posture") {
-          emit(BlueRecieveBadPostureState());
-        } else if (value == "Stretching") {
-          emit(BlueRecieveStretchingState());
-        } else if (value == "The device is on" ||
-            value == "The device is off") {
-          if (_writeCharacteristic.length == 0) {
-            _writeCharacteristic.add(chars[i]);
-          }
+        if (chars[i].serviceUuid == "00187ddc-9172-4c88-b472-1a3a12fece04") {
+          if (await value == "Bad posture") {
+            emit(BlueRecieveBadPostureState());
+          } else if (await value == "Stretching") {
+            emit(BlueRecieveStretchingState());
+          } else if (await value == "The device is on" ||
+              value == "The device is off") {
+            if (_writeCharacteristic.length == 0) {
+              _writeCharacteristic.add(chars[i]);
+            }
 
-          if (value == "The device is on") {
-            emit(BlueRecieveDeviceOn());
-          } else {
-            emit(BlueRecieveDeviceOf());
+            if (await value == "The device is on") {
+              emit(BlueRecieveDeviceOn());
+            } else {
+              emit(BlueRecieveDeviceOf());
+            }
+          } else if (await value[0] == "T") {
+            //time
+            provider.setSittingTime(value.substring(1));
+          } else if (await value[0] == "H") {
+            //heartRate
+            provider.setHeartRate(value.substring(1));
           }
-        } else if (value[0] == "T") {
-          //time
-          provider.setSittingTime(value.substring(1));
-        } else if (value[0] == "H") {
-          //heartRate
-          provider.setHeartRate(value.substring(1));
-        } else {
-          emit(BlueFoundDevicesState());
         }
       }
     }
