@@ -102,28 +102,6 @@ class StatsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "Average Time",
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 1, 90, 126),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "${context.watch<StatsProvider>().getAvgTime}",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Color.fromARGB(255, 1, 90, 126),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
             Divider(

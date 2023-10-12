@@ -5,14 +5,11 @@ class StatsProvider extends ChangeNotifier {
   List<double> _rates = [];
   double _avgRate = 1;
   double _sittingTime = 2;
-  List<double> _times = [];
-  double _avgTime = 3;
   bool _turnButtonStatus = true;
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
   double get getSittingTime => _sittingTime;
-  double get getAvgTime => _avgTime;
   bool get getTurnButtonStatus => _turnButtonStatus;
 
   void setHeartRate(String heartRate) {
@@ -26,9 +23,6 @@ class StatsProvider extends ChangeNotifier {
 
   void setSittingTime(String time) {
     _sittingTime = double.parse(time);
-    _times.add(_sittingTime);
-
-    _avgTime = _avg(_times);
 
     notifyListeners();
   }
