@@ -30,7 +30,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
         if (!_devicesList.contains(r)) _devicesList.add(r);
-        // print('${r.device.name} found! rssi: ${r.rssi}');
+        // print('${r.device} found! rssi: ${r.rssi}');
       }
     });
     await flutterBlue.stopScan();
@@ -51,7 +51,10 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     _connDevicesList = await flutterBlue.connectedDevices;
 
     for (int i = 0; i < _devicesList.length; i++) {
-      _connDevicesList.add(_devicesList[i].device);
+      if (_devicesList[i].device.name == "ESP32") {
+        _connDevicesList.add(_devicesList[i].device);
+        break;
+      }
     }
 
     _connDevicesList.forEach((device) async {
