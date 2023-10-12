@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyect_app/bloc/blue_bloc.dart';
 import 'package:proyect_app/init_page.dart';
+import 'package:proyect_app/mongo.dart';
 
-void main() => runApp(
-      BlocProvider(
-        create: (context) => BlueBloc()..add(StartScanningEvent()),
-        child: MyApp(),
-      ),
-    );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await MongoDatabase.connect();
+
+  runApp(
+    BlocProvider(
+      create: (context) => BlueBloc()..add(StartScanningEvent()),
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

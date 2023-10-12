@@ -130,10 +130,10 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
           }
         } else if (value[0] == "T") {
           //time
-          provider.setSittingTime(value);
+          provider.setSittingTime(value.substring(1));
         } else if (value[0] == "H") {
           //heartRate
-          provider.setHeartRate(value);
+          provider.setHeartRate(value.substring(1));
         } else {
           emit(BlueFoundDevicesState());
         }
