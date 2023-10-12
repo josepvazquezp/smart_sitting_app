@@ -19,3 +19,13 @@ class TryConnectingEvent extends BlueEvent {
   @override
   List<Object> get props => [device];
 }
+
+class TurnOnEvent extends BlueEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class TurnOffEvent extends BlueEvent {
+  @override
+  List<Object> get props => [];
+}

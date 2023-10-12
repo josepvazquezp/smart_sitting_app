@@ -24,3 +24,11 @@ class BlueErrorState extends BlueState {
   @override
   List<Object> get props => [errorMsg];
 }
+
+class BlueRecieveBadPostureState extends BlueState {} // show dialog
+
+class BlueRecieveStretchingState extends BlueState {} // show dialog stretch
+
+class BlueRecieveDeviceOn extends BlueState {} // color green
+
+class BlueRecieveDeviceOf extends BlueState {} // color red

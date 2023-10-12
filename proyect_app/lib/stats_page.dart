@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:proyect_app/bloc/blue_bloc.dart';
 import 'package:proyect_app/provider_stats_page.dart';
 
 class StatsPage extends StatelessWidget {
@@ -135,8 +137,10 @@ class StatsPage extends StatelessWidget {
               radius: 45,
               child: IconButton(
                 onPressed: () {
-                  context.read<StatsProvider>().pressedButton();
-                  _showPostureDialog(context);
+                  if (context.read<StatsProvider>().getTurnButtonStatus)
+                    BlocProvider.of<BlueBloc>(context).add(TurnOffEvent());
+                  else
+                    BlocProvider.of<BlueBloc>(context).add(TurnOnEvent());
                 },
                 icon: Icon(
                   Icons.power_settings_new,
@@ -144,6 +148,27 @@ class StatsPage extends StatelessWidget {
                 ),
                 iconSize: 58,
               ),
+            ),
+            BlocBuilder<BlueBloc, BlueState>(
+              builder: (context, state) {
+                if (state is BlueRecieveBadPostureState) {
+                  _showPostureDialog(context);
+                } else if (state is BlueRecieveStretchingState) {
+                  _showStretchDialog(context);
+                }
+
+                return Container();
+              },
+            ),
+            BlocBuilder<BlueBloc, BlueState>(
+              builder: (context, state) {
+                if (state is BlueRecieveDeviceOn ||
+                    state is BlueRecieveDeviceOf) {
+                  context.read<StatsProvider>().pressedButton();
+                }
+
+                return Container();
+              },
             ),
           ],
         ),
@@ -159,6 +184,20 @@ class StatsPage extends StatelessWidget {
           title: Text("Warning"),
           content: Text(
             "Bad posture STU-PD2 please sit correctly!",
+          ),
+        );
+      },
+    );
+  }
+
+  void _showStretchDialog(context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Advice"),
+          content: Text(
+            "Is time to Stretch my friend.",
           ),
         );
       },
