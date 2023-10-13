@@ -56,7 +56,7 @@ class StatsPage extends StatelessWidget {
             ),
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
-                if (state is BlueRecieveDeviceOnOff)
+                if (state is BlueRecieveHeartRateState)
                   return _showHeartRate(
                     context,
                     BlocProvider.of<BlueBloc>(context).getHeartRate,
@@ -75,7 +75,7 @@ class StatsPage extends StatelessWidget {
             ),
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
-                if (state is BlueRecieveDeviceOnOff)
+                if (state is BlueRecieveTimeState)
                   return _showTime(
                     context,
                     BlocProvider.of<BlueBloc>(context).getSittingTime,

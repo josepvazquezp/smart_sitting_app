@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:proyect_app/bloc/my_characteristic_parser.dart';
 import 'package:equatable/equatable.dart';
@@ -82,14 +83,17 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     switch (_stateEmitter) {
       case 1:
         emit(BlueRecieveBadPostureState());
+        break;
       case 2:
         emit(BlueRecieveStretchingState());
+        break;
       case 3:
         emit(
           BlueRecieveTimeState(
             time: getSittingTime,
           ),
         );
+        break;
       case 4:
         emit(
           BlueRecieveHeartRateState(
@@ -97,6 +101,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
             avgRate: getAvgRate,
           ),
         );
+        break;
       default:
         emit(BlueFoundDevicesState());
     }
@@ -160,11 +165,18 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         print(value);
         print("===========");
 
-        await chars[i].setNotifyValue(true);
-        chars[i].value.listen((value) {
-          // do something with new value
-          receiveValue(value.toString(), chars[i], emit);
-        });
+        if (chars[i].serviceUuid == _serviceUuid){
+          print("${chars[i].serviceUuid}");
+          await chars[i].setNotifyValue(true);
+          chars[i].value.listen((value) {
+            // do something with new value
+            Uint8List temp = Uint8List.fromList(value);
+            String valueString = String.fromCharCodes(temp);
+            print(valueString);
+            receiveValue(valueString, chars[i], emit);
+          });
+        }
+
       }
     }
   }
