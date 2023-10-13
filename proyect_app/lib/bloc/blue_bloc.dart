@@ -160,7 +160,11 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         print(value);
         print("===========");
 
-        await receiveValue(value, chars[i], emit);
+        await chars[i].setNotifyValue(true);
+        chars[i].value.listen((value) {
+          // do something with new value
+          receiveValue(value.toString(), chars[i], emit);
+        });
       }
     }
   }
