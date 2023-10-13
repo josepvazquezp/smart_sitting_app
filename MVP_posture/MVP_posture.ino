@@ -72,7 +72,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
       std::string messagePower;
       messagePower = "The device is on";
       pCharacteristic_on->setValue(messagePower);
-      pCharacteristic_time_sitting->setValue("0");
+      pCharacteristic_time_sitting->setValue("T0");
       deviceConnected = true;
       digitalWrite(led_power,HIGH);
       deviceOn = true;
@@ -124,6 +124,7 @@ class CharacteristicOnCallBack: public BLECharacteristicCallbacks {
       pCharacteristic_on->setValue(messagePower);
 
       std::string strTime= String(totalTimeSitting).c_str();
+      strTime = "T" + strTime;
       pCharacteristic_time_sitting->setValue(strTime);
       pCharacteristic_time_sitting->notify();
       totalTimeSitting = 0;
@@ -150,7 +151,7 @@ void activateStretch(){
   //We only notify that we need to stretch once per interval. We also notify the ammount of seconds sitting
     if(!notifiedStretch){
       notifiedStretch = true;
-      pCharacteristic_posture->setValue("Stretch");
+      pCharacteristic_posture->setValue("Stretching");
       pCharacteristic_posture->notify();
       digitalWrite(led_force, HIGH);
       ledState = HIGH;
@@ -159,6 +160,7 @@ void activateStretch(){
       baseTimeStretch = millis();
 
       std::string strTime= String(totalTimeSitting).c_str();
+      strTime = "T" + strTime;
       pCharacteristic_time_sitting->setValue(strTime);
       pCharacteristic_time_sitting->notify();
       totalTimeSitting = 0;
