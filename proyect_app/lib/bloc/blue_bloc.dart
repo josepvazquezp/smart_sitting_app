@@ -3,17 +3,25 @@ import 'package:bloc/bloc.dart';
 import 'package:proyect_app/bloc/my_characteristic_parser.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:proyect_app/provider_stats_page.dart';
 
 part 'blue_event.dart';
 part 'blue_state.dart';
 
 class BlueBloc extends Bloc<BlueEvent, BlueState> {
   FlutterBlue flutterBlue = FlutterBlue.instance;
-  StatsProvider provider = StatsProvider();
   List<ScanResult> _devicesList = [];
   List<BluetoothDevice> _connDevicesList = [];
   List<BluetoothCharacteristic> _writeCharacteristic = [];
+  double _heartRate = 0;
+  List<double> _rates = [];
+  double _avgRate = 1;
+  double _sittingTime = 2;
+  bool _turnButtonStatus = true;
+
+  double get getHeartRate => _heartRate;
+  double get getAvgRate => _avgRate;
+  double get getSittingTime => _sittingTime;
+  bool get getTurnButtonStatus => _turnButtonStatus;
 
   List<List<BluetoothCharacteristic>> _characteristicsList = [];
   List<List<BluetoothCharacteristic>> get getCharacteristicsList =>
@@ -113,31 +121,74 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         print(value);
         print("===========");
 
-        if (chars[i].serviceUuid == "00187ddc-9172-4c88-b472-1a3a12fece04") {
-          if (await value == "Bad posture") {
-            emit(BlueRecieveBadPostureState());
-          } else if (await value == "Stretching") {
-            emit(BlueRecieveStretchingState());
-          } else if (await value == "The device is on" ||
-              value == "The device is off") {
-            if (_writeCharacteristic.length == 0) {
-              _writeCharacteristic.add(chars[i]);
-            }
-
-            if (await value == "The device is on") {
-              emit(BlueRecieveDeviceOn());
-            } else {
-              emit(BlueRecieveDeviceOf());
-            }
-          } else if (await value[0] == "T") {
-            //time
-            provider.setSittingTime(value.substring(1));
-          } else if (await value[0] == "H") {
-            //heartRate
-            provider.setHeartRate(value.substring(1));
-          }
-        }
+        await receiveValue(value, chars[i], emit);
       }
     }
+  }
+
+  Future<void> receiveValue(
+      String value, BluetoothCharacteristic char, Emitter emit) async {
+    if (char.serviceUuid == "00187ddc-9172-4c88-b472-1a3a12fece04") {
+      if (value == "Bad posture") {
+        emit(BlueRecieveBadPostureState());
+      } else if (value == "Stretching") {
+        emit(BlueRecieveStretchingState());
+      } else if (value == "The device is on" || value == "The device is off") {
+        if (_writeCharacteristic.length == 0 &&
+            char.uuid == "010955a4-fc04-4fad-8bc9-26cf0de391cb") {
+          _writeCharacteristic.add(char);
+        }
+
+        if (value == "The device is on") {
+          if (!getTurnButtonStatus) {
+            pressedButton();
+          }
+        } else if (getTurnButtonStatus) {
+          pressedButton();
+        }
+      }
+
+      emit(
+        BlueRecieveDeviceOnOff(
+          on: getTurnButtonStatus,
+        ),
+      );
+    } else if (value[0] == "T") {
+      //time
+      _sittingTime = double.parse(value.substring(1));
+
+      emit(
+        BlueRecieveTimeState(
+          time: getSittingTime,
+        ),
+      );
+    } else if (value[0] == "H") {
+      //heartRate
+      _heartRate = double.parse(value.substring(1));
+      _rates.add(_heartRate);
+
+      _avgRate = _avg(_rates);
+
+      emit(
+        BlueRecieveHeartRateState(
+          heartRate: getHeartRate,
+          avgRate: getAvgRate,
+        ),
+      );
+    }
+  }
+
+  void pressedButton() {
+    _turnButtonStatus = !_turnButtonStatus;
+  }
+
+  double _avg(List<double> array) {
+    double temp = 0;
+
+    for (int i = 0; i < array.length; i++) {
+      temp += array[i];
+    }
+
+    return temp / array.length;
   }
 }

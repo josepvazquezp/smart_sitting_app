@@ -29,6 +29,26 @@ class BlueRecieveBadPostureState extends BlueState {} // show dialog
 
 class BlueRecieveStretchingState extends BlueState {} // show dialog stretch
 
-class BlueRecieveDeviceOn extends BlueState {} // color green
+class BlueRecieveDeviceOnOff extends BlueState {
+  final bool on;
 
-class BlueRecieveDeviceOf extends BlueState {} // color red
+  BlueRecieveDeviceOnOff({required this.on});
+  @override
+  List<Object> get props => [on];
+} // color green
+
+class BlueRecieveHeartRateState extends BlueState {
+  final double heartRate, avgRate;
+
+  BlueRecieveHeartRateState({required this.heartRate, required this.avgRate});
+  @override
+  List<Object> get props => [heartRate, avgRate];
+}
+
+class BlueRecieveTimeState extends BlueState {
+  final double time;
+
+  BlueRecieveTimeState({required this.time});
+  @override
+  List<Object> get props => [time];
+}
