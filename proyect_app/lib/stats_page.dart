@@ -173,7 +173,13 @@ class StatsPage extends StatelessWidget {
       backgroundColor: on ? Colors.green : Colors.red,
       radius: 45,
       child: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          if (on) {
+            BlocProvider.of<BlueBloc>(context).add(TurnOnEvent());
+          } else {
+            BlocProvider.of<BlueBloc>(context).add(TurnOffEvent());
+          }
+        },
         icon: Icon(
           Icons.power_settings_new,
           color: Colors.white,
