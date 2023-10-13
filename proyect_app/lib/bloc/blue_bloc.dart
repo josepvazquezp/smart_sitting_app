@@ -17,6 +17,8 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   double _avgRate = 1;
   double _sittingTime = 2;
   bool _turnButtonStatus = true;
+  Guid _serviceUuid = new Guid("00187ddc-9172-4c88-b472-1a3a12fece04");
+  Guid _charUuid = new Guid("010955a4-fc04-4fad-8bc9-26cf0de391cb");
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
@@ -127,54 +129,50 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   }
 
   Future<void> receiveValue(
-      String value, BluetoothCharacteristic char, Emitter emit) async {
-    if (char.serviceUuid == "00187ddc-9172-4c88-b472-1a3a12fece04") {
+    String value,
+    BluetoothCharacteristic char,
+    Emitter emit,
+  ) async {
+    if (char.serviceUuid == _serviceUuid) {
       if (value == "Bad posture") {
         emit(BlueRecieveBadPostureState());
       } else if (value == "Stretching") {
         emit(BlueRecieveStretchingState());
       } else if (value == "The device is on" || value == "The device is off") {
-        if (_writeCharacteristic.length == 0 &&
-            char.uuid == "010955a4-fc04-4fad-8bc9-26cf0de391cb") {
+        if (_writeCharacteristic.length == 0 && char.uuid == _charUuid) {
           _writeCharacteristic.add(char);
         }
 
-        if (value == "The device is on") {
-          if (!getTurnButtonStatus) {
-            pressedButton();
-          }
-        } else if (getTurnButtonStatus) {
-          pressedButton();
-        }
+        pressedButton();
+
+        emit(
+          BlueRecieveDeviceOnOff(
+            on: getTurnButtonStatus,
+          ),
+        );
+      } else if (value[0] == "T") {
+        //time
+        _sittingTime = double.parse(value.substring(1));
+
+        emit(
+          BlueRecieveTimeState(
+            time: getSittingTime,
+          ),
+        );
+      } else if (value[0] == "H") {
+        //heartRate
+        _heartRate = double.parse(value.substring(1));
+        _rates.add(_heartRate);
+
+        _avgRate = _avg(_rates);
+
+        emit(
+          BlueRecieveHeartRateState(
+            heartRate: getHeartRate,
+            avgRate: getAvgRate,
+          ),
+        );
       }
-
-      emit(
-        BlueRecieveDeviceOnOff(
-          on: getTurnButtonStatus,
-        ),
-      );
-    } else if (value[0] == "T") {
-      //time
-      _sittingTime = double.parse(value.substring(1));
-
-      emit(
-        BlueRecieveTimeState(
-          time: getSittingTime,
-        ),
-      );
-    } else if (value[0] == "H") {
-      //heartRate
-      _heartRate = double.parse(value.substring(1));
-      _rates.add(_heartRate);
-
-      _avgRate = _avg(_rates);
-
-      emit(
-        BlueRecieveHeartRateState(
-          heartRate: getHeartRate,
-          avgRate: getAvgRate,
-        ),
-      );
     }
   }
 

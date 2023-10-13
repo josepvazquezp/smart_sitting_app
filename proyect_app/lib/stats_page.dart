@@ -175,9 +175,9 @@ class StatsPage extends StatelessWidget {
       child: IconButton(
         onPressed: () {
           if (on) {
-            BlocProvider.of<BlueBloc>(context).add(TurnOnEvent());
-          } else {
             BlocProvider.of<BlueBloc>(context).add(TurnOffEvent());
+          } else {
+            BlocProvider.of<BlueBloc>(context).add(TurnOnEvent());
           }
         },
         icon: Icon(
