@@ -107,9 +107,9 @@ class StatsPage extends StatelessWidget {
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
                 if (state is BlueRecieveBadPostureState) {
-                  _showPostureDialog(context);
+                  Future.microtask(() => _showPostureDialog(context));
                 } else if (state is BlueRecieveStretchingState) {
-                  _showStretchDialog(context);
+                  Future.microtask(() => _showStretchDialog(context));
                 }
 
                 return Container();

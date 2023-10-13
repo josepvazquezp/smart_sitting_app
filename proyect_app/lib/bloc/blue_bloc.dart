@@ -199,7 +199,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         }
       } else if (value[0] == "T") {
         //time
-        _sittingTime = double.parse(value.substring(1));
+        _sittingTime = double.parse(value.substring(1)) / 1000;
 
         _stateEmitter = 3;
         add(ChangeStateEvent());
