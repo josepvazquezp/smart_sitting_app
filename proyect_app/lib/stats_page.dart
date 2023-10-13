@@ -27,7 +27,7 @@ class StatsPage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(15),
               child: Text(
-                'Breac\'s',
+                'Bread\'s',
                 style: TextStyle(
                   fontSize: 45,
                 ),
@@ -54,24 +54,55 @@ class StatsPage extends StatelessWidget {
             Divider(
               thickness: 2,
             ),
-            _showHeartRate(
-              context,
-              BlocProvider.of<BlueBloc>(context).getHeartRate,
-              BlocProvider.of<BlueBloc>(context).getAvgRate,
+            BlocBuilder<BlueBloc, BlueState>(
+              builder: (context, state) {
+                if (state is BlueRecieveDeviceOnOff)
+                  return _showHeartRate(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getHeartRate,
+                    BlocProvider.of<BlueBloc>(context).getAvgRate,
+                  );
+                else
+                  return _showHeartRate(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getHeartRate,
+                    BlocProvider.of<BlueBloc>(context).getAvgRate,
+                  );
+              },
             ),
             Divider(
               thickness: 2,
             ),
-            _showTime(
-              context,
-              BlocProvider.of<BlueBloc>(context).getSittingTime,
+            BlocBuilder<BlueBloc, BlueState>(
+              builder: (context, state) {
+                if (state is BlueRecieveDeviceOnOff)
+                  return _showTime(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getSittingTime,
+                  );
+                else
+                  return _showTime(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getSittingTime,
+                  );
+              },
             ),
             Divider(
               thickness: 2,
             ),
-            _showButton(
-              context,
-              BlocProvider.of<BlueBloc>(context).getTurnButtonStatus,
+            BlocBuilder<BlueBloc, BlueState>(
+              builder: (context, state) {
+                if (state is BlueRecieveDeviceOnOff)
+                  return _showButton(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getTurnButtonStatus,
+                  );
+                else
+                  return _showButton(
+                    context,
+                    BlocProvider.of<BlueBloc>(context).getTurnButtonStatus,
+                  );
+              },
             ),
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {

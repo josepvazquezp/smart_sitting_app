@@ -19,6 +19,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   bool _turnButtonStatus = true;
   Guid _serviceUuid = new Guid("00187ddc-9172-4c88-b472-1a3a12fece04");
   Guid _charUuid = new Guid("010955a4-fc04-4fad-8bc9-26cf0de391cb");
+  int _stateEmitter = 0;
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
@@ -39,13 +40,29 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   }
 
   FutureOr<void> blueWriteOn(TurnOnEvent event, Emitter emit) async {
-    if (_writeCharacteristic.length > 0)
+    if (_writeCharacteristic.length > 0) {
       await _writeCharacteristic[0].write([0x31]);
+      pressedButton();
+    }
+
+    emit(
+      BlueRecieveDeviceOnOff(
+        on: getTurnButtonStatus,
+      ),
+    );
   }
 
   FutureOr<void> blueWriteOff(TurnOffEvent event, Emitter emit) async {
-    if (_writeCharacteristic.length > 0)
+    if (_writeCharacteristic.length > 0) {
       await _writeCharacteristic[0].write([0x30]);
+      pressedButton();
+    }
+
+    emit(
+      BlueRecieveDeviceOnOff(
+        on: getTurnButtonStatus,
+      ),
+    );
   }
 
   FutureOr<void> blueScanning(StartScanningEvent event, Emitter emit) async {
@@ -62,7 +79,27 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     await flutterBlue.stopScan();
     await _getConnectedDevices(emit);
     // emmiting scanning has completed
-    emit(BlueFoundDevicesState());
+    switch (_stateEmitter) {
+      case 1:
+        emit(BlueRecieveBadPostureState());
+      case 2:
+        emit(BlueRecieveStretchingState());
+      case 3:
+        emit(
+          BlueRecieveTimeState(
+            time: getSittingTime,
+          ),
+        );
+      case 4:
+        emit(
+          BlueRecieveHeartRateState(
+            heartRate: getHeartRate,
+            avgRate: getAvgRate,
+          ),
+        );
+      default:
+        emit(BlueFoundDevicesState());
+    }
   }
 
   FutureOr<void> blueConnecting(TryConnectingEvent event, Emitter emit) async {
@@ -135,30 +172,18 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   ) async {
     if (char.serviceUuid == _serviceUuid) {
       if (value == "Bad posture") {
-        emit(BlueRecieveBadPostureState());
+        _stateEmitter = 1;
       } else if (value == "Stretching") {
-        emit(BlueRecieveStretchingState());
+        _stateEmitter = 2;
       } else if (value == "The device is on" || value == "The device is off") {
         if (_writeCharacteristic.length == 0 && char.uuid == _charUuid) {
           _writeCharacteristic.add(char);
         }
-
-        pressedButton();
-
-        emit(
-          BlueRecieveDeviceOnOff(
-            on: getTurnButtonStatus,
-          ),
-        );
       } else if (value[0] == "T") {
         //time
         _sittingTime = double.parse(value.substring(1));
 
-        emit(
-          BlueRecieveTimeState(
-            time: getSittingTime,
-          ),
-        );
+        _stateEmitter = 3;
       } else if (value[0] == "H") {
         //heartRate
         _heartRate = double.parse(value.substring(1));
@@ -166,14 +191,11 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
 
         _avgRate = _avg(_rates);
 
-        emit(
-          BlueRecieveHeartRateState(
-            heartRate: getHeartRate,
-            avgRate: getAvgRate,
-          ),
-        );
-      }
-    }
+        _stateEmitter = 4;
+      } else
+        _stateEmitter = 0;
+    } else
+      _stateEmitter = 0;
   }
 
   void pressedButton() {
