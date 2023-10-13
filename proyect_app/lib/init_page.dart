@@ -12,11 +12,11 @@ class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Smart sitting app'),
-        ),
-        body: Center(
-            child: Column(
+      appBar: AppBar(
+        title: Text('Smart sitting app'),
+      ),
+      body: Center(
+        child: Column(
           children: [
             SizedBox(
               height: 100,
@@ -43,7 +43,10 @@ class _InitPageState extends State<InitPage> {
               child: MaterialButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => StatsPage()));
+                    MaterialPageRoute(
+                      builder: (context) => StatsPage(),
+                    ),
+                  );
                 },
                 child: Text(
                   'Conecta tu dispositivo para empezar',
@@ -54,6 +57,19 @@ class _InitPageState extends State<InitPage> {
               ),
             ),
           ],
-        )));
+        ),
+      ),
+    );
   }
+
+  // ListView _caracteristics(BuildContext context) {
+  //   return ListView.builder(
+  //     itemCount:
+  //         BlocProvider.of<BlueBloc>(context).getCharacteristicsList.length,
+  //     itemBuilder: (BuildContext context, int index) {
+  //       return Text(
+  //           "Caracteristic [$index]: ${BlocProvider.of<BlueBloc>(context).getCharacteristicsList[index]}");
+  //     },
+  //   );
+  // }
 }
