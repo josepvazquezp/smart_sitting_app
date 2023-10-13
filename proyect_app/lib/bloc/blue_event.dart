@@ -29,3 +29,8 @@ class TurnOffEvent extends BlueEvent {
   @override
   List<Object> get props => [];
 }
+
+class ChangeStateEvent extends BlueEvent {
+  @override
+  List<Object> get props => [];
+}

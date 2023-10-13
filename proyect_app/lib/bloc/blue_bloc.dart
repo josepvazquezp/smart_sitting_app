@@ -38,6 +38,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     on<TryConnectingEvent>(blueConnecting);
     on<TurnOnEvent>(blueWriteOn);
     on<TurnOffEvent>(blueWriteOff);
+    on<ChangeStateEvent>(blueSwitch);
   }
 
   FutureOr<void> blueWriteOn(TurnOnEvent event, Emitter emit) async {
@@ -165,7 +166,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         print(value);
         print("===========");
 
-        if (chars[i].serviceUuid == _serviceUuid){
+        if (chars[i].serviceUuid == _serviceUuid) {
           print("${chars[i].serviceUuid}");
           await chars[i].setNotifyValue(true);
           chars[i].value.listen((value) {
@@ -176,7 +177,6 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
             receiveValue(valueString, chars[i], emit);
           });
         }
-
       }
     }
   }
@@ -189,8 +189,10 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     if (char.serviceUuid == _serviceUuid) {
       if (value == "Bad posture") {
         _stateEmitter = 1;
+        add(ChangeStateEvent());
       } else if (value == "Stretching") {
         _stateEmitter = 2;
+        add(ChangeStateEvent());
       } else if (value == "The device is on" || value == "The device is off") {
         if (_writeCharacteristic.length == 0 && char.uuid == _charUuid) {
           _writeCharacteristic.add(char);
@@ -200,6 +202,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         _sittingTime = double.parse(value.substring(1));
 
         _stateEmitter = 3;
+        add(ChangeStateEvent());
       } else if (value[0] == "H") {
         //heartRate
         _heartRate = double.parse(value.substring(1));
@@ -208,6 +211,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         _avgRate = _avg(_rates);
 
         _stateEmitter = 4;
+        add(ChangeStateEvent());
       } else
         _stateEmitter = 0;
     } else
@@ -226,5 +230,33 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     }
 
     return temp / array.length;
+  }
+
+  FutureOr<void> blueSwitch(ChangeStateEvent event, Emitter emit) async {
+    switch (_stateEmitter) {
+      case 1:
+        emit(BlueRecieveBadPostureState());
+        break;
+      case 2:
+        emit(BlueRecieveStretchingState());
+        break;
+      case 3:
+        emit(
+          BlueRecieveTimeState(
+            time: getSittingTime,
+          ),
+        );
+        break;
+      case 4:
+        emit(
+          BlueRecieveHeartRateState(
+            heartRate: getHeartRate,
+            avgRate: getAvgRate,
+          ),
+        );
+        break;
+      default:
+        emit(BlueFoundDevicesState());
+    }
   }
 }
