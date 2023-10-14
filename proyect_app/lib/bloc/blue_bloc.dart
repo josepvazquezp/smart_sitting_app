@@ -200,6 +200,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     if (char.serviceUuid == _serviceUuid) {
       if (value == "Bad posture") {
         _stateEmitter = 1;
+        _badCounter++;
         add(ChangeStateEvent());
       } else if (value == "Stretching") {
         _stateEmitter = 2;
@@ -250,7 +251,6 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   FutureOr<void> blueSwitch(ChangeStateEvent event, Emitter emit) async {
     switch (_stateEmitter) {
       case 1:
-        _badCounter++;
         emit(BlueRecieveBadPostureState());
         break;
       case 2:
