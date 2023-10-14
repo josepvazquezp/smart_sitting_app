@@ -212,6 +212,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
 
         if (value == "The device is off") {
           await _insertData();
+          await _getData();
         }
       } else if (value[0] == "T") {
         //time
