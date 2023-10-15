@@ -283,7 +283,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
       join(await getDatabasesPath(), 'smart.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE Smart(id INTEGER PRIMARY KEY, sitting REAL, badCounter INTEGER)',
+          'CREATE TABLE Smart(id LONG PRIMARY KEY, sitting REAL, badCounter INTEGER)',
         );
       },
       version: 1,
@@ -294,7 +294,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     await _database.insert(
       'vpointer',
       {
-        "id": DateTime.now(),
+        "id": DateTime.now().millisecondsSinceEpoch,
         "sitting": getSittingTime,
         "badCounter": _badCounter,
       },
