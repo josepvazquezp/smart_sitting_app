@@ -294,7 +294,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     await _database.insert(
       'vpointer',
       {
-        "id": DateTime.now(),
+        "id": DateTime.now().millisecondsSinceEpoch,
         "sitting": getSittingTime,
         "badCounter": _badCounter,
       },
