@@ -203,8 +203,6 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         _badCounter++;
         add(ChangeStateEvent());
       } else if (value == "Stretching") {
-        await _insertData();
-        await _getData();
         _stateEmitter = 2;
         add(ChangeStateEvent());
       } else if (value == "The device is on" || value == "The device is off") {
@@ -219,6 +217,11 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
       } else if (value[0] == "T") {
         //time
         _sittingTime = double.parse(value.substring(1)) / 1000;
+
+        if (_stateEmitter == 2) {
+          await _insertData();
+          await _getData();
+        }
 
         _stateEmitter = 3;
         add(ChangeStateEvent());
@@ -293,7 +296,6 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   }
 
   Future<void> _insertData() async {
-    _badCounter = 0;
     await _database.insert(
       'Smart',
       {
@@ -302,6 +304,8 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         "badCounter": _badCounter,
       },
     );
+
+    _badCounter = 0;
   }
 
   Future<void> _getData() async {
@@ -309,5 +313,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     print(
         "=========================LOAD_DATA====================================");
     print(_loadValue);
+
+    // Datetime date = DateTime.fromMillisecondsSinceEpoch(id * 1000);
   }
 }
