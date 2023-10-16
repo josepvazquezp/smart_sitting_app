@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:path/path.dart';
@@ -314,6 +315,14 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         "=========================LOAD_DATA====================================");
     print(_loadValue);
 
+    List<Map<String, dynamic>> listValues = json.decode(_loadValue.toString());
+
+    for (int i = 0; i < listValues.length; i++) {
+      listValues[i]["id"] =
+          DateTime.fromMillisecondsSinceEpoch(listValues[i]["id"] * 1000);
+    }
+
+    print(listValues);
     // Datetime date = DateTime.fromMillisecondsSinceEpoch(id * 1000);
   }
 }
