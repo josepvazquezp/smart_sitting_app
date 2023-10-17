@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
+import 'package:path/path.dart';
 import 'package:proyect_app/bloc/my_characteristic_parser.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:sqflite/sqflite.dart';
 
 part 'blue_event.dart';
 part 'blue_state.dart';
@@ -21,6 +24,9 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   Guid _serviceUuid = new Guid("00187ddc-9172-4c88-b472-1a3a12fece04");
   Guid _charUuid = new Guid("010955a4-fc04-4fad-8bc9-26cf0de391cb");
   int _stateEmitter = 0;
+  int _badCounter = 0;
+  var _database;
+  var _loadValue;
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
@@ -69,6 +75,11 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
 
   FutureOr<void> blueScanning(StartScanningEvent event, Emitter emit) async {
     emit(BlueLookingForDevicesState());
+
+    //base
+    await _connectDatabase();
+    await _getData();
+
     // scanning and refreshing devices list
     print("======Scanning for devices=====");
     await flutterBlue.startScan(timeout: Duration(seconds: 4));
@@ -83,6 +94,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     // emmiting scanning has completed
     switch (_stateEmitter) {
       case 1:
+        _badCounter++;
         emit(BlueRecieveBadPostureState());
         break;
       case 2:
@@ -189,6 +201,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     if (char.serviceUuid == _serviceUuid) {
       if (value == "Bad posture") {
         _stateEmitter = 1;
+        _badCounter++;
         add(ChangeStateEvent());
       } else if (value == "Stretching") {
         _stateEmitter = 2;
@@ -197,9 +210,19 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
         if (_writeCharacteristic.length == 0 && char.uuid == _charUuid) {
           _writeCharacteristic.add(char);
         }
+
+        if (value == "The device is off") {
+          await _insertData();
+          await _getData();
+        }
       } else if (value[0] == "T") {
         //time
         _sittingTime = double.parse(value.substring(1)) / 1000;
+
+        if (_stateEmitter == 2) {
+          await _insertData();
+          await _getData();
+        }
 
         _stateEmitter = 3;
         add(ChangeStateEvent());
@@ -258,5 +281,39 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
       default:
         emit(BlueFoundDevicesState());
     }
+  }
+
+  //SQLite
+  Future<void> _connectDatabase() async {
+    _database = await openDatabase(
+      join(await getDatabasesPath(), 'smart.db'),
+      onCreate: (db, version) async {
+        await db.execute(
+          'CREATE TABLE Smart(id INTEGER PRIMARY KEY, saveAt TEXT,sitting REAL, badCounter INTEGER)',
+        );
+      },
+      version: 1,
+    );
+  }
+
+  Future<void> _insertData() async {
+    await _database.insert(
+      'Smart',
+      {
+        "id": DateTime.now().millisecondsSinceEpoch,
+        "saveAt": DateTime.now().toString(),
+        "sitting": getSittingTime,
+        "badCounter": _badCounter,
+      },
+    );
+
+    _badCounter = 0;
+  }
+
+  Future<void> _getData() async {
+    _loadValue = await _database.query('Smart');
+    print(
+        "=========================LOAD_DATA====================================");
+    print(_loadValue);
   }
 }
