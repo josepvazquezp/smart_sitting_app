@@ -314,6 +314,8 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     _loadValue = await _database.query('Smart');
     print(
         "=========================LOAD_DATA====================================");
-    print(_loadValue);
+    // print(_loadValue);
+    var list = json.decode(_loadValue).cast<String>().toList();
+    print(list[0]);
   }
 }
