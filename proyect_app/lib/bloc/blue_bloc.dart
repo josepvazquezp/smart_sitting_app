@@ -26,7 +26,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   int _stateEmitter = 0;
   int _badCounter = 0;
   var _database;
-  var _loadValue;
+  List<Map<String, dynamic>> _loadValue = [];
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
