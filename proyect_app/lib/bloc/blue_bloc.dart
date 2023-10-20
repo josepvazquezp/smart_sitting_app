@@ -26,7 +26,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   int _stateEmitter = 0;
   int _badCounter = 0;
   var _database;
-  var _loadValue;
+  List<Map<String, dynamic>> _loadValue = [];
 
   double get getHeartRate => _heartRate;
   double get getAvgRate => _avgRate;
@@ -314,8 +314,6 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
     _loadValue = await _database.query('Smart');
     print(
         "=========================LOAD_DATA====================================");
-    // print(_loadValue);
-    var list = json.decode(_loadValue).cast<String>().toList();
-    print(list[0]);
+    print(_loadValue);
   }
 }
