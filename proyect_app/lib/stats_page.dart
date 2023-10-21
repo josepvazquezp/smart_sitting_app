@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyect_app/bloc/blue_bloc.dart';
+import 'package:proyect_app/stats.dart';
 
 class StatsPage extends StatelessWidget {
   StatsPage({super.key});
@@ -56,25 +57,6 @@ class StatsPage extends StatelessWidget {
             ),
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
-                if (state is BlueRecieveHeartRateState)
-                  return _showHeartRate(
-                    context,
-                    BlocProvider.of<BlueBloc>(context).getHeartRate,
-                    BlocProvider.of<BlueBloc>(context).getAvgRate,
-                  );
-                else
-                  return _showHeartRate(
-                    context,
-                    BlocProvider.of<BlueBloc>(context).getHeartRate,
-                    BlocProvider.of<BlueBloc>(context).getAvgRate,
-                  );
-              },
-            ),
-            Divider(
-              thickness: 2,
-            ),
-            BlocBuilder<BlueBloc, BlueState>(
-              builder: (context, state) {
                 if (state is BlueRecieveTimeState)
                   return _showTime(
                     context,
@@ -103,6 +85,26 @@ class StatsPage extends StatelessWidget {
                     BlocProvider.of<BlueBloc>(context).getTurnButtonStatus,
                   );
               },
+            ),
+            Material(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22)),
+              color: Colors.cyan,
+              child: MaterialButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => Stats(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Cargar Datos',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
@@ -141,56 +143,6 @@ class StatsPage extends StatelessWidget {
               "${time}",
               style: TextStyle(
                 fontSize: 30,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Row _showHeartRate(BuildContext context, double heart, double avg) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Heart Rate",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Text(
-              "${heart}",
-              style: TextStyle(
-                fontSize: 30,
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Average Rate",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 1, 90, 126),
-                ),
-              ),
-            ),
-            Text(
-              "${avg}",
-              style: TextStyle(
-                fontSize: 30,
-                color: Color.fromARGB(255, 1, 90, 126),
               ),
             ),
           ],

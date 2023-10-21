@@ -32,6 +32,7 @@ class BlueBloc extends Bloc<BlueEvent, BlueState> {
   double get getAvgRate => _avgRate;
   double get getSittingTime => _sittingTime;
   bool get getTurnButtonStatus => _turnButtonStatus;
+  List<Map<String, dynamic>> get getSavedValues => _loadValue;
 
   List<List<BluetoothCharacteristic>> _characteristicsList = [];
   List<List<BluetoothCharacteristic>> get getCharacteristicsList =>
