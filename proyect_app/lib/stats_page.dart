@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyect_app/bloc/blue_bloc.dart';
 import 'package:proyect_app/stats.dart';
+import 'package:proyect_app/graph_page.dart';
+
 
 class StatsPage extends StatelessWidget {
   StatsPage({super.key});
@@ -86,26 +88,54 @@ class StatsPage extends StatelessWidget {
                   );
               },
             ),
-            Material(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22)),
-              color: Colors.cyan,
-              child: MaterialButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => Stats(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22)),
+                  color: Colors.cyan,
+                  child: MaterialButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Stats(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Debug Data',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
-                  );
-                },
-                child: Text(
-                  'Cargar Datos',
-                  style: TextStyle(
-                    color: Colors.white,
                   ),
                 ),
-              ),
+                SizedBox(width: 30,),
+                Material(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22)),
+                  color: Colors.cyan,
+                  child: MaterialButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Reports(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Graph',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            
+            
             BlocBuilder<BlueBloc, BlueState>(
               builder: (context, state) {
                 if (state is BlueRecieveBadPostureState) {
@@ -179,7 +209,7 @@ class StatsPage extends StatelessWidget {
         return AlertDialog(
           title: Text("Warning"),
           content: Text(
-            "Bad posture STU-PD2 please sit correctly!",
+            "Bad posture please sit correctly!",
           ),
         );
       },
@@ -193,7 +223,7 @@ class StatsPage extends StatelessWidget {
         return AlertDialog(
           title: Text("Advice"),
           content: Text(
-            "Is time to Stretch my friend.",
+            "It's time to stretch my friend.",
           ),
         );
       },

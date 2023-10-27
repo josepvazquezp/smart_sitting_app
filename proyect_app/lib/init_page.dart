@@ -22,17 +22,17 @@ class _InitPageState extends State<InitPage> {
               height: 100,
             ),
             Text(
-              'Skill Issue',
+              'Smart chair',
               style: TextStyle(
                 fontSize: 46,
               ),
             ),
-            Text(
-              'Sillas inteligentes',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
+            // Text(
+            //   'Smart chair',
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //   ),
+            // ),
             SizedBox(
               height: 130,
             ),
@@ -49,7 +49,7 @@ class _InitPageState extends State<InitPage> {
                   );
                 },
                 child: Text(
-                  'Conecta tu dispositivo para empezar',
+                  'Connect your device to begin',
                   style: TextStyle(
                     color: Colors.white,
                   ),

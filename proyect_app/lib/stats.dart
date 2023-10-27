@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:proyect_app/bloc/blue_bloc.dart';
 
 class Stats extends StatelessWidget {
-  const Stats({super.key});
+  Stats({super.key});
+  DateFormat dateFormat = DateFormat('dd/MM/yyyy h:mm a');
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class Stats extends StatelessWidget {
           child: Column(
         children: [
           Text(
-            'Datos Recolectados',
+            'Collected Data',
           ),
           SizedBox(
             height: 30,
@@ -52,28 +55,28 @@ class Stats extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          "${data[index]['id']}",
+                          "Id: ${data[index]['id']}",
                           style: TextStyle(
                             fontSize: 26,
                             color: Colors.white,
                           ),
                         ),
                         Text(
-                          "${data[index]['sitting']}",
+                          "Sitting: ${(data[index]['sitting']/60).toStringAsFixed(2)} min",
                           style: TextStyle(
                             fontSize: 26,
                             color: Colors.white,
                           ),
                         ),
                         Text(
-                          "${data[index]['badCounter']}",
+                          "Warnings: ${data[index]['badCounter']}",
                           style: TextStyle(
                             fontSize: 26,
                             color: Colors.white,
                           ),
                         ),
                         Text(
-                          "${data[index]['saveAts']}",
+                          data[index]['saveAt'].split('.')[0],
                           style: TextStyle(
                             fontSize: 26,
                             color: Colors.white,
