@@ -26,11 +26,18 @@ class BarChartReportes extends StatelessWidget {
                   gridData: FlGridData(drawVerticalLine: false),
                   alignment: BarChartAlignment.center,
                   groupsSpace: 25,
-                  barGroups:List.generate(Provider.of<ReportsProvider>(context).listTimeSitting.length, (index){
+                  barGroups:Provider.of<ReportsProvider>(context).type == "Time"
+                  ? List.generate(Provider.of<ReportsProvider>(context).listTimeSitting.length, (index){
                     return BarChartGroupData(x: Provider.of<ReportsProvider>(context).startDate.day + index, 
                       barRods: [BarChartRodData(toY: Provider.of<ReportsProvider>(context).listTimeSitting[index], 
                       color:Theme.of(context).primaryColor, width: 12)], showingTooltipIndicators:[1] );
-                  }),
+                    })
+                  : List.generate(Provider.of<ReportsProvider>(context).listWarning.length, (index){
+                    return BarChartGroupData(x: Provider.of<ReportsProvider>(context).startDate.day + index, 
+                      barRods: [BarChartRodData(toY: Provider.of<ReportsProvider>(context).listWarning[index], 
+                      color:Theme.of(context).primaryColor, width: 12)], showingTooltipIndicators:[1] );
+                    })
+                    ,
                   barTouchData: BarTouchData(
                     enabled: true,
                     handleBuiltInTouches: true,
@@ -39,9 +46,8 @@ class BarChartReportes extends StatelessWidget {
                       getTooltipItem: (group,groupIndex,rod,rodIndex){
                         String tooltipValue = rod.toY.toStringAsFixed(2);
                         return BarTooltipItem(tooltipValue, TextStyle(color: Colors.blue, fontWeight: FontWeight.bold));
-                      }
-                      
-                      )
+                      }  
+                    )
                   ),
                 ),
               ),

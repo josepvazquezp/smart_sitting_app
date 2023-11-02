@@ -10,6 +10,7 @@ class ReportsProvider with ChangeNotifier{
   List<double> _listTimeSitting = [];
   double _warningsAvg = 0;
   double _timeSittingAvg = 0;
+  String type = "Time";
 
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;

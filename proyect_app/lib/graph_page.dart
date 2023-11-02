@@ -23,8 +23,11 @@ class Reports extends StatefulWidget {
 class _ReportsState extends State<Reports> {
   DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
-    Map<String, List<SittingPeriod>> cleanMap = {};
-    List<Map<String, dynamic>> data = [];
+  Map<String, List<SittingPeriod>> cleanMap = {};
+  List<Map<String, dynamic>> data = [];
+  final TextEditingController controllerType = TextEditingController();
+  String? selectedType = "Time";
+
 
 
   //Inicializamos a que la pantalla tenga la gráfica y datos de la semana actual
@@ -86,7 +89,7 @@ class _ReportsState extends State<Reports> {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(10,20.0,10,15),
+        padding: const EdgeInsets.fromLTRB(5,20.0,5,15),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -119,7 +122,7 @@ class _ReportsState extends State<Reports> {
                                 cleanMap = createCleanMap(data);
                                 showWeekPicker(context,cleanMap);
                               }, 
-                              child: const Text('Choose week',style: TextStyle(fontSize: 15, color:Colors.white)),
+                              child: const Text('Choose week',style: TextStyle(fontSize: 15, color:Colors.white),textAlign: TextAlign.center,),
                             )
                           ),
                         ),
@@ -153,13 +156,29 @@ class _ReportsState extends State<Reports> {
                                 cleanMap = createCleanMap(data);
                                 showMonthPicker(context,cleanMap);
                               }, 
-                              child: const Text('Choose month',style: TextStyle(fontSize: 15, color:Colors.white)),
+                              child: const Text('Choose month',style: TextStyle(fontSize: 15, color:Colors.white),textAlign: TextAlign.center,),
                             )
                           ),
                         ),
                       ]),
                     ),
                   ),
+                  DropdownMenu<String>(
+                    width: 120,
+                    menuHeight: 200,
+                    initialSelection: "Time",
+                    controller: controllerType,
+                    dropdownMenuEntries: [DropdownMenuEntry<String>(value: "Time", label: "Time",),
+                      DropdownMenuEntry<String>(value: "Warnings", label: "Warnings",)],
+                    onSelected: (String? type) {
+                      setState(() {
+                        selectedType = type;
+                        Provider.of<ReportsProvider>(context, listen:false).type=selectedType!;
+                        cleanMap = createCleanMap(data);
+                        Provider.of<ReportsProvider>(context, listen:false).calculateAvg(cleanMap);
+                      });
+                    },
+                  )
               ],),
             ),
       
